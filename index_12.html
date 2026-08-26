@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>果園巡查與智慧農業服務需求調查｜GreenMind</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bark:   '#3A3226',
+          leaf:   '#3E5C3A',
+          leaf2:  '#5C7F52',
+          moss:   '#8FA876',
+          soil:   '#EFE9DA',
+          paper:  '#FBF9F3',
+          sun:    '#C98A2B',
+          rust:   '#B5502E',
+        },
+        fontFamily: {
+          serif: ['"Noto Serif TC"', 'serif'],
+          sans:  ['"Noto Sans TC"', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Noto Sans TC', sans-serif; background-color: #FBF9F3; }
+  .serif { font-family: 'Noto Serif TC', serif; }
+  .row-divider {
+    height: 14px;
+    background-image: radial-gradient(circle, #5C7F52 2.5px, transparent 2.6px);
+    background-size: 22px 14px;
+    background-position: center;
+    opacity: .55;
+  }
+  .field-error { display:none; }
+  .invalid .field-error { display:block; }
+  .invalid .field-ring { box-shadow: 0 0 0 2px #B5502E; border-color:#B5502E !important; }
+  input[type="checkbox"], input[type="radio"] {
+    accent-color: #3E5C3A;
+    width: 1.15rem; height: 1.15rem;
+  }
+  ::selection { background:#C98A2B; color:#fff; }
+  .opt { position: relative; }
+  .rank-badge {
+    display:none;
+    position:absolute; top:-8px; right:-8px;
+    width:22px; height:22px; border-radius:9999px;
+    background:#C98A2B; color:#fff; font-size:12px; font-weight:700;
+    align-items:center; justify-content:center;
+  }
+  .ranked .rank-badge { display:flex; }
+</style>
+</head>
+<body class="text-bark">
+
+<div id="progressWrap" class="sticky top-0 z-40 bg-paper/95 backdrop-blur border-b border-bark/10">
+  <div class="max-w-3xl mx-auto px-5 py-3">
+    <div class="flex items-center justify-between mb-2">
+      <span class="serif font-bold text-leaf text-sm tracking-wide">GreenMind 巡查路徑</span>
+      <span id="progressLabel" class="text-xs text-bark/60">第 1 段／共 7 段</span>
+    </div>
+    <div class="w-full h-2 rounded-full bg-soil overflow-hidden">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-leaf to-moss rounded-full transition-all duration-500" style="width:6%"></div>
+    </div>
+  </div>
+</div>
+
+<header class="max-w-3xl mx-auto px-5 pt-10 pb-6">
+  <p class="text-sun font-bold tracking-[0.3em] text-xs mb-3">GREENMIND · 果園田野調查</p>
+  <h1 class="serif text-3xl md:text-4xl font-bold text-leaf leading-snug">
+    果園巡查與智慧農業服務需求調查
+  </h1>
+  <div class="row-divider my-5"></div>
+  <div class="text-[15px] leading-relaxed text-bark/85 space-y-3 bg-soil/50 border border-bark/10 rounded-2xl p-5">
+    <p>您好，我們是正在進行「智慧果園營運服務」研究的學生團隊 <b>GreenMind</b>。</p>
+    <p>我們想了解果農在<b>果園巡查、病蟲害觀察、資料紀錄與人力管理</b>上的實際情況，作為後續服務設計與創業計畫研究的參考。</p>
+    <p>問卷約需 <b>3–5 分鐘</b>，採<b>匿名</b>方式填寫，資料僅作研究與創業提案分析使用。我們目前<b>不是在推銷產品</b>，也沒有要求您購買任何設備。您的真實經驗對我們非常重要，謝謝您的協助！</p>
+  </div>
+</header>
+
+<form id="surveyForm" class="max-w-3xl mx-auto px-5 pb-28 space-y-10" novalidate>
+
+  <!-- ============ SECTION 1：基本資料 ============ -->
+  <section data-section="1" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">一、您與果園的基本資料</h2>
+
+    <!-- Q1 -->
+    <div class="q" data-required="true" data-type="checkbox" data-name="q1_crops">
+      <p class="font-bold mb-1">Q1. 您目前主要種植哪些作物？<span class="text-rust">＊</span><span class="text-xs font-normal text-bark/50">（可複選）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q1_crops" value="柑橘／桶柑／茂谷柑"><span>柑橘／桶柑／茂谷柑</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="水梨"><span>水梨</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="芭樂"><span>芭樂</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="柿子"><span>柿子</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="桃"><span>桃</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="李"><span>李</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="柚子"><span>柚子</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="葡萄"><span>葡萄</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="蘋果"><span>蘋果</span></label>
+        <label class="opt"><input type="checkbox" name="q1_crops" value="棗子"><span>棗子</span></label>
+        <label class="opt-other"><input type="checkbox" name="q1_crops" value="其他" data-other-toggle="q1_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q1_other" id="q1_other" placeholder="請說明其他作物" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少選擇一項作物（若選「其他」請填寫說明）。</p>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q2_region">
+      <p class="font-bold mb-1">Q2. 您的果園主要位於哪個地區？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q2_region" value="新竹縣"><span>新竹縣</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="新竹市"><span>新竹市</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="桃園"><span>桃園</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="苗栗"><span>苗栗</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="台中"><span>台中</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="彰化"><span>彰化</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="南投"><span>南投</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="嘉義"><span>嘉義</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="高雄"><span>高雄</span></label>
+        <label class="opt"><input type="radio" name="q2_region" value="屏東"><span>屏東</span></label>
+        <label class="opt-other"><input type="radio" name="q2_region" value="其他" data-other-toggle="q2_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q2_other" id="q2_other" placeholder="請說明其他地區" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請選擇果園所在地區。</p>
+    </div>
+
+    <!-- Q3 面積（甲）＋ 地塊數，處理多筆土地的狀況 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q3_area">
+      <p class="font-bold mb-1">Q3. 您目前管理的果園總面積大約多少？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（單位：甲；若有多筆土地，請估算加總後的甲數）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q3_area" value="0.1甲以下"><span>0.1 甲以下</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="0.1–0.5甲"><span>0.1–0.5 甲</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="0.5–1甲"><span>0.5–1 甲</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="1–3甲"><span>1–3 甲</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="3–5甲"><span>3–5 甲</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="5–10甲"><span>5–10 甲</span></label>
+        <label class="opt"><input type="radio" name="q3_area" value="10甲以上"><span>10 甲以上</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇果園總面積。</p>
+    </div>
+
+    <!-- Q3-2 地塊數量 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q3_plots">
+      <p class="font-bold mb-1">Q3-1. 這些果園分屬幾塊土地（地號）管理？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（不同地方的果園算不同塊）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q3_plots" value="1塊"><span>1 塊</span></label>
+        <label class="opt"><input type="radio" name="q3_plots" value="2–3塊"><span>2–3 塊</span></label>
+        <label class="opt"><input type="radio" name="q3_plots" value="4–6塊"><span>4–6 塊</span></label>
+        <label class="opt"><input type="radio" name="q3_plots" value="7塊以上"><span>7 塊以上</span></label>
+        <label class="opt"><input type="radio" name="q3_plots" value="不確定"><span>不確定</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇地塊數量。</p>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q4_manage">
+      <p class="font-bold mb-1">Q4. 您目前主要是以哪種方式經營果園？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q4_manage" value="自己／家庭經營"><span>自己／家庭經營</span></label>
+        <label class="opt"><input type="radio" name="q4_manage" value="家庭＋臨時工"><span>家庭＋臨時工</span></label>
+        <label class="opt"><input type="radio" name="q4_manage" value="家庭＋固定員工"><span>家庭＋固定員工</span></label>
+        <label class="opt"><input type="radio" name="q4_manage" value="僱用農業工人"><span>僱用農業工人</span></label>
+        <label class="opt"><input type="radio" name="q4_manage" value="產銷班／合作社共同經營"><span>產銷班／合作社共同經營</span></label>
+        <label class="opt-other"><input type="radio" name="q4_manage" value="其他" data-other-toggle="q4_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q4_other" id="q4_other" placeholder="請說明其他經營方式" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請選擇經營方式。</p>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 2：目前的果園管理方式 ============ -->
+  <section data-section="2" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">二、目前的果園管理方式</h2>
+
+    <!-- Q5（已移除「完整」） -->
+    <div class="q" data-required="true" data-type="radio" data-name="q5_freq">
+      <p class="font-bold mb-1">Q5. 您目前平均多久會巡查一次果園？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q5_freq" value="每天"><span>每天</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="1–2天一次"><span>1–2 天一次</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="每週2–3次"><span>每週 2–3 次</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="每週一次"><span>每週一次</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="每2週一次"><span>每 2 週一次</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="每月一次"><span>每月一次</span></label>
+        <label class="opt"><input type="radio" name="q5_freq" value="沒有固定頻率"><span>沒有固定頻率</span></label>
+        <label class="opt-other"><input type="radio" name="q5_freq" value="其他" data-other-toggle="q5_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q5_other" id="q5_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請選擇巡查頻率。</p>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q6_duration">
+      <p class="font-bold mb-1">Q6. 一次巡查果園，大約需要多少時間？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q6_duration" value="30分鐘以下"><span>30 分鐘以下</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="30分鐘–1小時"><span>30 分鐘–1 小時</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="1–2小時"><span>1–2 小時</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="2–4小時"><span>2–4 小時</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="4–8小時"><span>4–8 小時</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="8小時以上"><span>8 小時以上</span></label>
+        <label class="opt"><input type="radio" name="q6_duration" value="不太確定"><span>不太確定</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇巡查所需時間。</p>
+    </div>
+
+    <!-- Q7 改為排序題（最多排前 3 名） -->
+    <div class="q rank-q" data-required="true" data-type="rank" data-name="q7_observe" data-max="3">
+      <p class="font-bold mb-1">Q7. 您平常巡查果園時，最主要會觀察哪些事情？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（請依重要程度依序點選，最多前 3 名；已選 <span class="count">0</span>/3）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q7_observe" value="病蟲害"><span>病蟲害</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="葉片狀況"><span>葉片狀況</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="果實狀況"><span>果實狀況</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="樹體生長"><span>樹體生長</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="土壤／水分"><span>土壤／水分</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="灌溉設備"><span>灌溉設備</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="天氣造成的影響"><span>天氣造成的影響</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="雜草"><span>雜草</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="果樹倒伏／設備損壞"><span>果樹倒伏／設備損壞</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q7_observe" value="果實成熟度"><span>果實成熟度</span><span class="rank-badge"></span></label>
+        <label class="opt-other"><input type="checkbox" name="q7_observe" value="其他" data-other-toggle="q7_other"><span>其他</span><span class="rank-badge"></span></label>
+      </div>
+      <input type="text" name="q7_other" id="q7_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少排序 1 項。</p>
+    </div>
+
+    <!-- Q8：合併原本的「記錄方式」與「科技工具使用」 -->
+    <div class="q" data-required="true" data-type="checkbox" data-name="q8_tools">
+      <p class="font-bold mb-1">Q8. 您目前會如何記錄果園狀況，或使用哪些工具協助管理？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（可複選）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q8_tools" value="沒有特別記錄／沒有使用工具"><span>沒有特別記錄／沒有使用工具</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="靠自己記憶"><span>靠自己記憶</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="手機拍照"><span>手機拍照</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="LINE／通訊軟體"><span>LINE／通訊軟體</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="紙本"><span>紙本</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="Excel"><span>Excel</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="農業相關App"><span>農業相關 App</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="GPS／地圖"><span>GPS／地圖</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="氣象App"><span>氣象 App</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="土壤／環境感測器"><span>土壤／環境感測器</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="自動灌溉"><span>自動灌溉</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="無人機"><span>無人機</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="AI／影像辨識"><span>AI／影像辨識</span></label>
+        <label class="opt"><input type="checkbox" name="q8_tools" value="農業機器人"><span>農業機器人</span></label>
+        <label class="opt-other"><input type="checkbox" name="q8_tools" value="其他" data-other-toggle="q8_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q8_other" id="q8_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少選擇一項。</p>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 3：真正的痛點 ============ -->
+  <section data-section="3" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">三、真正的痛點</h2>
+
+    <!-- Q9 改為排序題（前5名） -->
+    <div class="q rank-q" data-required="true" data-type="rank" data-name="q9_pain" data-max="5">
+      <p class="font-bold mb-1">Q9. 在管理果園時，您覺得目前最困擾的事情有哪些？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（請依困擾程度依序點選，最多前 5 名；已選 <span class="count">0</span>/5）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q9_pain" value="人力不足"><span>人力不足</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="巡查果園花費太多時間"><span>巡查花費太多時間</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="果園太大不容易完整巡查"><span>果園太大不易完整巡查</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="病蟲害不容易及早發現"><span>病蟲害不易及早發現</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="天氣造成的損害"><span>天氣造成的損害</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="灌溉管理"><span>灌溉管理</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="農務紀錄整理"><span>農務紀錄整理</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="缺乏歷史資料可以比較"><span>缺乏歷史資料可比較</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="不容易掌握不同區域的果樹狀況"><span>難掌握不同區域狀況</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="農忙時容易漏掉部分果園"><span>農忙時容易漏查</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="智慧農業設備價格太高"><span>智慧農業設備價格太高</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="不知道哪些智慧農業工具值得使用"><span>不知道哪些工具值得用</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q9_pain" value="操作科技設備不方便"><span>操作科技設備不方便</span><span class="rank-badge"></span></label>
+        <label class="opt-other"><input type="checkbox" name="q9_pain" value="其他" data-other-toggle="q9_other"><span>其他</span><span class="rank-badge"></span></label>
+      </div>
+      <input type="text" name="q9_other" id="q9_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少排序 1 項。</p>
+    </div>
+
+    <!-- Q10（改為門檻式問法） -->
+    <div class="q" data-required="true" data-type="radio" data-name="q10_threshold">
+      <p class="font-bold mb-1">Q10. 您通常在發現幾顆（棵）果實或果樹有異常（病蟲害／損傷等）之後，才會開始進行處理？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q10_threshold" value="發現1顆就會馬上處理"><span>發現 1 顆就會馬上處理</span></label>
+        <label class="opt"><input type="radio" name="q10_threshold" value="累積2–5顆才處理"><span>累積 2–5 顆才處理</span></label>
+        <label class="opt"><input type="radio" name="q10_threshold" value="累積6–10顆才處理"><span>累積 6–10 顆才處理</span></label>
+        <label class="opt"><input type="radio" name="q10_threshold" value="整棵樹／整區明顯出問題才處理"><span>整棵樹／整區明顯出問題才處理</span></label>
+        <label class="opt"><input type="radio" name="q10_threshold" value="沒有固定標準，視情況而定"><span>沒有固定標準，視情況而定</span></label>
+        <label class="opt-other"><input type="radio" name="q10_threshold" value="其他" data-other-toggle="q10_other"><span>其他</span></label>
+      </div>
+      <input type="text" name="q10_other" id="q10_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請選擇一個選項。</p>
+    </div>
+
+    <!-- Q11（原Q12，改為選填） -->
+    <div class="q" data-required="false" data-type="text" data-name="q11_wish">
+      <p class="font-bold mb-1">Q11. 如果可以改善一件果園管理上的事情，您最希望改善什麼？<span class="text-xs font-normal text-bark/50">（選填）</span></p>
+      <textarea name="q11_wish" rows="3" placeholder="請用自己的話告訴我們……" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm"></textarea>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 4：科技使用習慣 ============ -->
+  <section data-section="4" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">四、科技使用習慣</h2>
+
+    <!-- Q12（原Q14，改為排序題，前3名） -->
+    <div class="q rank-q" data-required="true" data-type="rank" data-name="q12_barrier" data-max="3">
+      <p class="font-bold mb-1">Q12. 如果您沒有使用較多智慧農業工具，主要原因是？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（請依影響程度依序點選，最多前 3 名；已選 <span class="count">0</span>/3）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="價格太高"><span>價格太高</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="不知道哪些工具真的有用"><span>不知道哪些工具真的有用</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="操作太複雜"><span>操作太複雜</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="不知道如何導入"><span>不知道如何導入</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="維護麻煩"><span>維護麻煩</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="果園環境不適合"><span>果園環境不適合</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="覺得人工處理比較方便"><span>覺得人工處理比較方便</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="目前沒有迫切需求"><span>目前沒有迫切需求</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q12_barrier" value="沒有時間學習"><span>沒有時間學習</span><span class="rank-badge"></span></label>
+        <label class="opt-other"><input type="checkbox" name="q12_barrier" value="其他" data-other-toggle="q12_other"><span>其他</span><span class="rank-badge"></span></label>
+      </div>
+      <input type="text" name="q12_other" id="q12_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少排序 1 項。</p>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 5：GreenMind 概念測試 ============ -->
+  <section data-section="5" class="space-y-6">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">五、GreenMind 概念測試</h2>
+    <div class="bg-leaf/5 border border-leaf/20 rounded-2xl p-5 text-[15px] leading-relaxed space-y-3">
+      <p><b>GreenMind</b> 是一項「智慧果園巡檢與資料代管服務」構想。我們不是要賣您一台機器，而是由 GreenMind 團隊自己持有自走車、感測器與攝影設備，定期到您的果園執行巡檢、拍攝與資料整理，把結果轉成您看得懂的報告——您不用自己負擔設備成本、不用保管維修，也不用擔心設備留在果園裡被偷。</p>
+      <p>目前規劃的服務內容，會依您的需求組合搭配：</p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><b>果園資料盤點</b>：第一次到場整理果園照片、樹列／作物觀察，建立基本資料卡</li>
+        <li><b>定期巡檢觀察報告</b>：固定頻率（如每月 1–2 次）到場巡檢，交付影像巡檢摘要、異常標記，以及不同時間點的比較</li>
+        <li><b>產季重點監測</b>：產季期間加密巡檢頻率，追蹤重點區域與病蟲害觀察，產季末提供彙整回顧</li>
+        <li><b>專案改善建議</b>：針對灌溉、病蟲害觀察或作業流程，提出具體改善建議</li>
+      </ul>
+      <p class="text-bark/70 text-sm">目前仍處於新竹場域的市場與服務驗證階段（MVP），AI 影像辨識等功能也還在開發驗證中，尚未成熟商品化；這次調查主要是想了解您實際的需求與付費意願，作為服務設計的參考。</p>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 6：產品價值測試 ============ -->
+  <section data-section="6" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">六、產品價值測試</h2>
+
+    <!-- Q13（原Q15，改排序題） -->
+    <div class="q rank-q" data-required="true" data-type="rank" data-name="q13_value" data-max="3">
+      <p class="font-bold mb-1">Q13. 如果有這樣的服務，以下哪些功能對您最有價值？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（請依重要程度依序點選，最多前 3 名；已選 <span class="count">0</span>/3）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="checkbox" name="q13_value" value="定期幫忙巡查果園"><span>定期幫忙巡查果園</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="拍攝並保存果園影像"><span>拍攝並保存果園影像</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="將果園分區管理"><span>將果園分區管理</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="標記需要注意的區域"><span>標記需要注意的區域</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="比較不同時間的果園狀況"><span>比較不同時間的果園狀況</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="協助發現疑似病蟲害"><span>協助發現疑似病蟲害</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="產生簡單的果園巡查報告"><span>產生簡單的巡查報告</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="保存農務歷史紀錄"><span>保存農務歷史紀錄</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="氣象／環境資料整合"><span>氣象／環境資料整合</span><span class="rank-badge"></span></label>
+        <label class="opt"><input type="checkbox" name="q13_value" value="不需要自己購買及維護設備"><span>不需自己購買及維護設備</span><span class="rank-badge"></span></label>
+        <label class="opt-other"><input type="checkbox" name="q13_value" value="其他" data-other-toggle="q13_other"><span>其他</span><span class="rank-badge"></span></label>
+      </div>
+      <input type="text" name="q13_other" id="q13_other" placeholder="請說明" class="other-input field-ring hidden mt-2 w-full rounded-lg border border-bark/20 px-3 py-2 text-sm">
+      <p class="field-error text-rust text-xs mt-1">請至少排序 1 項。</p>
+    </div>
+  </section>
+
+  <div class="row-divider"></div>
+
+  <!-- ============ SECTION 7：價格與付費意願 ============ -->
+  <section data-section="7" class="space-y-8">
+    <h2 class="serif text-xl font-bold text-leaf border-l-4 border-sun pl-3">七、價格與付費意願</h2>
+
+    <!-- Q14 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q14_pricing">
+      <p class="font-bold mb-1">Q14. 若提供「一次果園巡查＋影像紀錄＋分析報告」，您比較能接受哪一種收費方式？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q14_pricing" value="單次付費"><span>單次付費</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="每月訂閱"><span>每月訂閱</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="每季／產季方案"><span>每季／產季方案</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="半年方案"><span>半年方案</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="年度方案"><span>年度方案</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="產銷班／合作社統一採購"><span>產銷班／合作社統一採購</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="政府／農會補助後使用"><span>政府／農會補助後使用</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="不確定"><span>不確定</span></label>
+        <label class="opt"><input type="radio" name="q14_pricing" value="不會使用"><span>不會使用</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇一個選項。</p>
+    </div>
+
+    <!-- Q15 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q15_price">
+      <p class="font-bold mb-1">Q15. 若提供「一次果園巡查＋影像紀錄＋分析報告」，以<b>每甲果園</b>計算，您認為<b>單次</b>願意支付的合理價格大約是多少？<span class="text-rust">＊</span>
+        <span class="text-xs font-normal text-bark/50">（例如 3 甲果園，單次願付 7,500 元，換算就是每甲 2,500 元）</span></p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q15_price" value="500元以下/甲"><span>500 元以下／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="500–1000元/甲"><span>500–1,000 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="1000–1500元/甲"><span>1,000–1,500 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="1500–2000元/甲"><span>1,500–2,000 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="2000–2500元/甲"><span>2,000–2,500 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="2500–3000元/甲"><span>2,500–3,000 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="3000–4000元/甲"><span>3,000–4,000 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="4000–5000元/甲"><span>4,000–5,000 元／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="5000元以上/甲"><span>5,000 元以上／甲</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="即使免費也不會使用"><span>即使免費也不會使用</span></label>
+        <label class="opt"><input type="radio" name="q15_price" value="不確定"><span>不確定</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇一個選項。</p>
+    </div>
+
+    <!-- Q16（原Q21，選填） -->
+    <div class="q" data-required="false" data-type="text" data-name="q16_noreason">
+      <p class="font-bold mb-1">Q16. 如果您不會使用這樣的服務，最主要的原因是什麼？<span class="text-xs font-normal text-bark/50">（選填）</span></p>
+      <textarea name="q16_noreason" rows="3" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm"></textarea>
+    </div>
+
+    <!-- Q17：資料提供同意（原試辦意願改版）＋稱謂＋聯絡方式，合併並前移 -->
+    <div class="q" data-required="true" data-type="radio" data-name="q17_consent">
+      <p class="font-bold mb-1">Q17. 您是否願意提供您果園的相關資訊／數據，作為本研究實地調查與學術用途使用？<span class="text-rust">＊</span></p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
+        <label class="opt"><input type="radio" name="q17_consent" value="願意" id="q17_yes"><span>願意</span></label>
+        <label class="opt"><input type="radio" name="q17_consent" value="需要再討論細節" id="q17_maybe"><span>需要再討論細節</span></label>
+        <label class="opt"><input type="radio" name="q17_consent" value="不願意" id="q17_no"><span>不願意</span></label>
+      </div>
+      <p class="field-error text-rust text-xs mt-1">請選擇一個選項。</p>
+    </div>
+
+    <div id="q17_contact_wrap" class="q hidden bg-sun/10 border-2 border-sun/40 rounded-2xl p-5" data-required="false" data-type="text" data-name="q17_contact">
+      <p class="font-bold mb-1 flex items-center gap-2">
+        <span>Q17-1. 請留下稱謂與方便聯絡的方式</span>
+        <span class="text-rust">＊</span>
+      </p>
+      <p class="text-xs text-bark/60 mb-3">您選擇了願意／可討論，請至少留下一種聯絡方式，我們才能真正聯絡到您 🙏</p>
+      <div class="grid sm:grid-cols-2 gap-3 mb-3">
+        <div class="sm:col-span-2">
+          <label class="text-xs text-bark/60">稱謂（例如：某某果園、某某人）</label>
+          <input type="text" name="q17_title" placeholder="例如：阿明果園 或 王小明" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm mt-1">
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div>
+          <label class="text-xs text-bark/60">LINE ID</label>
+          <input type="text" name="q17_line" placeholder="例如 greenmind123" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm mt-1">
+        </div>
+        <div>
+          <label class="text-xs text-bark/60">電話</label>
+          <input type="tel" name="q17_phone" placeholder="例如 0912345678" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm mt-1">
+        </div>
+        <div>
+          <label class="text-xs text-bark/60">Email</label>
+          <input type="email" name="q17_email" placeholder="example@mail.com" class="field-ring w-full rounded-lg border border-bark/20 px-3 py-2 text-sm mt-1">
+        </div>
+      </div>
+      <p class="text-xs text-bark/50 mt-3">聯絡資訊僅用於後續研究調查，不會用於其他用途。</p>
+      <p class="field-error text-rust text-xs mt-2 font-medium">⚠️ 請至少留下一種聯絡方式。</p>
+    </div>
+  </section>
+
+  <!-- ============ 送出 ============ -->
+  <div id="submitZone" class="pt-4">
+    <div id="formMsg" class="hidden mb-4 rounded-xl px-4 py-3 text-sm"></div>
+    <button type="submit" id="submitBtn"
+      class="w-full sm:w-auto px-8 py-3.5 rounded-full bg-leaf text-paper font-bold tracking-wide serif text-lg
+             hover:bg-leaf2 active:scale-[.98] transition disabled:opacity-50 disabled:cursor-not-allowed
+             shadow-lg shadow-leaf/20">
+      送出問卷 🌱
+    </button>
+    <p class="text-xs text-bark/50 mt-3">送出前系統會自動檢查必填欄位，請放心填寫。</p>
+  </div>
+</form>
+
+<footer class="text-center text-xs text-bark/40 py-8">GreenMind 團隊敬上 · 感謝您的協助</footer>
+
+<script>
+/* =====================================================================
+   1. 樣式輔助：勾選/單選外框高亮
+   ===================================================================== */
+document.querySelectorAll('.opt, .opt-other').forEach(label => {
+  label.classList.add('flex','items-center','gap-2','border','border-bark/15','rounded-lg',
+    'px-3','py-2','text-sm','cursor-pointer','hover:border-leaf/50','hover:bg-leaf/5','transition');
+  const input = label.querySelector('input');
+  const refresh = () => {
+    label.classList.toggle('bg-leaf/10', input.checked);
+    label.classList.toggle('border-leaf', input.checked);
+    label.classList.toggle('font-medium', input.checked);
+  };
+  input.addEventListener('change', () => {
+    if (input.type === 'radio') {
+      document.getElementsByName(input.name).forEach(r => {
+        r.closest('label').classList.remove('bg-leaf/10','border-leaf','font-medium');
+      });
+    }
+    refresh();
+  });
+});
+
+/* =====================================================================
+   2. 「其他」文字欄位顯示/隱藏
+   ===================================================================== */
+document.querySelectorAll('[data-other-toggle]').forEach(input => {
+  const targetId = input.getAttribute('data-other-toggle');
+  const target = document.getElementById(targetId);
+  const sync = () => {
+    if (input.checked) { target.classList.remove('hidden'); target.focus(); }
+    else { target.classList.add('hidden'); }
+  };
+  input.addEventListener('change', () => {
+    if (input.type === 'radio') {
+      const group = document.getElementsByName(input.name);
+      group.forEach(r => { if (r !== input && r.hasAttribute('data-other-toggle')) {
+        document.getElementById(r.getAttribute('data-other-toggle')).classList.add('hidden');
+      }});
+    }
+    sync();
+  });
+});
+
+/* =====================================================================
+   3. 最多可選 N 項（Q9）
+   ===================================================================== */
+document.querySelectorAll('.q[data-max]:not(.rank-q)').forEach(qEl => {
+  const max = parseInt(qEl.dataset.max, 10);
+  const boxes = qEl.querySelectorAll('input[type="checkbox"]');
+  const counter = qEl.querySelector('.count');
+  const update = () => {
+    const checked = qEl.querySelectorAll('input[type="checkbox"]:checked').length;
+    if (counter) counter.textContent = checked;
+    boxes.forEach(b => { if (!b.checked) b.disabled = checked >= max; });
+  };
+  boxes.forEach(b => b.addEventListener('change', update));
+  update();
+});
+
+/* =====================================================================
+   4. 排序題（Q7 / Q13）：點選順序即排名，最多前 N 名
+   ===================================================================== */
+document.querySelectorAll('.rank-q').forEach(qEl => {
+  const max = parseInt(qEl.dataset.max, 10) || 3;
+  const boxes = Array.from(qEl.querySelectorAll('input[type="checkbox"]'));
+  const counter = qEl.querySelector('.count');
+  let order = []; // array of checkbox elements in ranked order
+
+  function renderBadges() {
+    boxes.forEach(b => {
+      const label = b.closest('label');
+      const badge = label.querySelector('.rank-badge');
+      const idx = order.indexOf(b);
+      if (idx === -1) {
+        label.classList.remove('ranked');
+        badge.textContent = '';
+      } else {
+        label.classList.add('ranked');
+        badge.textContent = (idx + 1);
+      }
+    });
+    if (counter) counter.textContent = order.length;
+    boxes.forEach(b => { if (!b.checked) b.disabled = order.length >= max; });
+  }
+
+  boxes.forEach(box => {
+    box.addEventListener('change', () => {
+      if (box.checked) {
+        if (order.length >= max) { box.checked = false; return; }
+        order.push(box);
+      } else {
+        order = order.filter(b => b !== box);
+      }
+      renderBadges();
+    });
+  });
+
+  renderBadges();
+});
+
+/* =====================================================================
+   5. Q17：願意／可討論才展開聯絡方式區塊
+   ===================================================================== */
+const q17ContactWrap = document.getElementById('q17_contact_wrap');
+function toggleQ17Contact(show) {
+  if (show) {
+    q17ContactWrap.classList.remove('hidden');
+    q17ContactWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.querySelector('[name="q17_title"]').focus(), 300);
+  } else {
+    q17ContactWrap.classList.add('hidden');
+  }
+}
+document.getElementById('q17_yes').addEventListener('change', () => toggleQ17Contact(true));
+document.getElementById('q17_maybe').addEventListener('change', () => toggleQ17Contact(true));
+document.getElementById('q17_no').addEventListener('change', () => toggleQ17Contact(false));
+
+/* =====================================================================
+   6. 巡查路徑進度列
+   ===================================================================== */
+const sections = Array.from(document.querySelectorAll('section[data-section]'));
+const progressBar = document.getElementById('progressBar');
+const progressLabel = document.getElementById('progressLabel');
+const totalSections = sections.length;
+
+function updateProgress() {
+  let current = 1;
+  const scrollPos = window.scrollY + 140;
+  sections.forEach((s, idx) => { if (s.offsetTop <= scrollPos) current = idx + 1; });
+  progressBar.style.width = Math.round((current / totalSections) * 100) + '%';
+  progressLabel.textContent = `第 ${current} 段／共 ${totalSections} 段`;
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+updateProgress();
+
+/* =====================================================================
+   7. 驗證邏輯
+   ===================================================================== */
+function clearErrors() {
+  document.querySelectorAll('.q.invalid').forEach(q => q.classList.remove('invalid'));
+}
+
+function validateForm() {
+  clearErrors();
+  let firstInvalid = null;
+  const qs = document.querySelectorAll('.q[data-required]');
+
+  qs.forEach(q => {
+    if (q.id === 'q17_contact_wrap') return; // 特殊規則另外處理
+
+    const required = q.dataset.required === 'true';
+    if (!required) return;
+
+    const type = q.dataset.type;
+    const name = q.dataset.name;
+    let valid = true;
+
+    if (type === 'checkbox' || type === 'rank') {
+      const checked = q.querySelectorAll(`input[name="${name}"]:checked`);
+      valid = checked.length > 0;
+      const otherBox = q.querySelector('input[value="其他"]');
+      if (valid && otherBox && otherBox.checked) {
+        const otherInput = q.querySelector('.other-input');
+        if (otherInput && otherInput.value.trim() === '') valid = false;
+      }
+    } else if (type === 'radio') {
+      const checked = q.querySelector(`input[name="${name}"]:checked`);
+      valid = !!checked;
+      const otherBox = q.querySelector('input[value="其他"]');
+      if (valid && otherBox && otherBox.checked) {
+        const otherInput = q.querySelector('.other-input');
+        if (otherInput && otherInput.value.trim() === '') valid = false;
+      }
+    } else if (type === 'text') {
+      const el = q.querySelector('textarea, input[type="text"]');
+      valid = el && el.value.trim().length > 0;
+    }
+
+    if (!valid) {
+      q.classList.add('invalid');
+      if (!firstInvalid) firstInvalid = q;
+    }
+  });
+
+  // Q17 特殊規則：願意／需要再討論 時，聯絡方式至少擇一
+  const q17Checked = document.querySelector('input[name="q17_consent"]:checked')?.value;
+  if (q17Checked === '願意' || q17Checked === '需要再討論細節') {
+    const line = document.querySelector('[name="q17_line"]').value.trim();
+    const phone = document.querySelector('[name="q17_phone"]').value.trim();
+    const email = document.querySelector('[name="q17_email"]').value.trim();
+    if (!line && !phone && !email) {
+      q17ContactWrap.classList.add('invalid');
+      if (!firstInvalid) firstInvalid = q17ContactWrap;
+    }
+  }
+
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return !firstInvalid;
+}
+
+/* =====================================================================
+   8. 收集表單資料 → JSON
+   ===================================================================== */
+function collectFormData() {
+  const form = document.getElementById('surveyForm');
+  const data = {};
+
+  // 一般checkbox群組（多值以「、」合併）
+  const checkboxGroups = ['q1_crops','q8_tools'];
+  checkboxGroups.forEach(name => {
+    const vals = Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value);
+    data[name] = vals.join('、');
+  });
+
+  // 排序題群組（依點選順序輸出，例如「病蟲害>葉片狀況>果實狀況」）
+  ['q7_observe','q9_pain','q12_barrier','q13_value'].forEach(name => {
+    const qEl = document.querySelector(`.rank-q[data-name="${name}"]`);
+    const boxes = Array.from(qEl.querySelectorAll(`input[name="${name}"]`));
+    const checked = boxes.filter(b => b.checked);
+    // 依畫面上目前的 rank-badge 數字排序（由 JS 邏輯維護的 order）
+    checked.sort((a, b) => {
+      const ba = parseInt(a.closest('label').querySelector('.rank-badge').textContent || '999', 10);
+      const bb = parseInt(b.closest('label').querySelector('.rank-badge').textContent || '999', 10);
+      return ba - bb;
+    });
+    data[name] = checked.map(i => i.value).join(' > ');
+  });
+
+  // radio
+  ['q2_region','q3_area','q3_plots','q4_manage','q5_freq','q6_duration','q10_threshold','q14_pricing','q15_price','q17_consent']
+    .forEach(name => { data[name] = form.querySelector(`input[name="${name}"]:checked`)?.value || ''; });
+
+  // text / textarea
+  ['q11_wish','q16_noreason'].forEach(name => {
+    data[name] = form.querySelector(`[name="${name}"]`)?.value.trim() || '';
+  });
+
+  // 各題「其他」補充說明，附加在對應欄位後面
+  ['q1_other','q2_other','q4_other','q5_other','q7_other','q8_other','q9_other','q10_other','q12_other','q13_other']
+    .forEach(name => {
+      const el = document.getElementById(name);
+      if (el && !el.classList.contains('hidden') && el.value.trim()) {
+        const base = name.replace('_other','');
+        const key = {
+          q1:'q1_crops', q2:'q2_region', q4:'q4_manage', q5:'q5_freq',
+          q7:'q7_observe', q8:'q8_tools', q9:'q9_pain', q10:'q10_threshold',
+          q12:'q12_barrier', q13:'q13_value'
+        }[base];
+        if (key && data[key] !== undefined) {
+          data[key] = data[key].replace('其他', `其他（${el.value.trim()}）`);
+        }
+      }
+    });
+
+  // Q17 稱謂與聯絡方式
+  data['q17_title'] = form.querySelector('[name="q17_title"]')?.value.trim() || '';
+  data['q17_line'] = form.querySelector('[name="q17_line"]')?.value.trim() || '';
+  data['q17_phone'] = form.querySelector('[name="q17_phone"]')?.value.trim() || '';
+  data['q17_email'] = form.querySelector('[name="q17_email"]')?.value.trim() || '';
+
+  data['submitted_at'] = new Date().toISOString();
+  data['user_agent'] = navigator.userAgent;
+
+  return data;
+}
+
+/* =====================================================================
+   9. 送出：google.script.run（此頁面由 Apps Script 直接託管）
+   ===================================================================== */
+const form = document.getElementById('surveyForm');
+const submitBtn = document.getElementById('submitBtn');
+const formMsg = document.getElementById('formMsg');
+
+function showMsg(text, ok) {
+  formMsg.textContent = text;
+  formMsg.classList.remove('hidden','bg-leaf/10','text-leaf','bg-rust/10','text-rust');
+  formMsg.classList.add(ok ? 'bg-leaf/10' : 'bg-rust/10', ok ? 'text-leaf' : 'text-rust');
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  if (!validateForm()) {
+    showMsg('部分必填欄位尚未完成，請往上檢查標示為紅色的題目。', false);
+    return;
+  }
+
+  const payload = collectFormData();
+  submitBtn.disabled = true;
+  submitBtn.textContent = '送出中…';
+
+  google.script.run
+    .withSuccessHandler((result) => {
+      if (result && result.status === 'error') {
+        showMsg('送出失敗：' + result.message, false);
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送出問卷 🌱';
+        return;
+      }
+      showMsg('✅ 問卷已送出，非常感謝您的協助！', true);
+      form.reset();
+      document.querySelectorAll('.other-input').forEach(el => el.classList.add('hidden'));
+      q17ContactWrap.classList.add('hidden');
+      document.querySelectorAll('.opt, .opt-other').forEach(l => l.classList.remove('bg-leaf/10','border-leaf','font-medium'));
+      document.querySelectorAll('.q[data-max]:not(.rank-q)').forEach(q => q.querySelectorAll('input').forEach(i => i.disabled = false));
+      document.querySelectorAll('.rank-q').forEach(q => q.querySelectorAll('input').forEach(i => i.disabled = false));
+      document.querySelectorAll('.rank-badge').forEach(b => b.textContent = '');
+      document.querySelectorAll('.ranked').forEach(l => l.classList.remove('ranked'));
+      document.querySelectorAll('.count').forEach(c => c.textContent = '0');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      submitBtn.textContent = '已送出 ✔';
+    })
+    .withFailureHandler((err) => {
+      console.error(err);
+      showMsg('送出時發生問題，請確認網路連線後再試一次，或稍後再試。', false);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '送出問卷 🌱';
+    })
+    .submitForm(payload);
+});
+</script>
+</body>
+</html>
